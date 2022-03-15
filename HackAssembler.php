@@ -40,6 +40,7 @@ class HackAssembler
 
         // Creates an output file
         $binary_file = fopen("Prog.hack", 'w')  or die("Problem creating Prog.hack file");
+        // TODO: give output file same name and location as input file.
 
         foreach($assembly_instructions as $instruction) {
             // Strip away anything after the statement, like a comment.
@@ -49,13 +50,15 @@ class HackAssembler
                 $instruction = substr($instruction, 0, $white_space);
             }
 
+            // Determine instruction type
             $type = $this->instruction_type($instruction);
 
+            // Translate A-Instruction
             if ($type === self::A_INSTRUCTION) {
                 $binary = $this->translate_a_instruction($instruction);
             }
 
-            // C-Instruction
+            // Translate C-Instruction
             if ($type === self::C_INSTRUCTION) {
                 $binary = $this->translate_c_instruction($instruction);
             }
@@ -116,8 +119,8 @@ class HackAssembler
     public function translate_c_instruction($instruction)
     {
         // Parse each line into its pieces.
-        $comp = $this->parser->comp($instruction);
         $dest = $this->parser->dest($instruction);
+        $comp = $this->parser->comp($instruction);
         $jump = $this->parser->jump($instruction);
 
         // Translate each piece into its binary equivalent - Decoder.
@@ -187,7 +190,7 @@ class HackAssembler
 /** For symbolic (assembly) C-instructions, parses the instruction into its fields (dest, comp, & jump). */
 class Parser {
     /**
-     * Returns the dest segment of the current C-instruction (8 possibilities)
+     * Returns the dest segment of the current C-instruction (8 possibilities: null, M, D, MD, A, AM, AD, AMD )
      * For example:
      *  'D=M' returns 'D'
      *
@@ -210,7 +213,7 @@ class Parser {
      * Returns the comp segment of the current C-instruction (28 possibilities)
      * For example:
      *  'D=M' returns 'M'
-     *  'M=M=1 returns 'M+1'
+     *  'M=M+1 returns 'M+1'
      *
      * @param string $instruction
      * @return string $comp
@@ -219,7 +222,7 @@ class Parser {
     {
         $jump_delineator = ';';
         $equation_pattern = '/=(.*)/';
-        $condition_pattern = '/(.*);/';
+        $condition_pattern = '/(.*);/'; // If it contains a jump.
 
         preg_match($equation_pattern, $instruction, $matches_equation);
         preg_match($condition_pattern, $instruction, $matches_conditional);
