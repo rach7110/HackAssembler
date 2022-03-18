@@ -42,7 +42,11 @@ class HackAssembler
 
         // Creates an output file
         $binary_file = fopen("Prog.hack", 'w')  or die("Problem creating Prog.hack file");
+
         // TODO: Improvement - give output file same name and location as input file.
+
+        // Blank lines are actually removed.
+        $assembly_instructions = array_values(array_filter($assembly_instructions, "trim"));
 
         foreach($assembly_instructions as $instruction) {
             // Strip away anything after the statement, like a comment.
