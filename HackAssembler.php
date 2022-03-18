@@ -25,7 +25,6 @@ class HackAssembler
 
     public function __construct($input_file)
     {
-        $input_file = "add/Add.asm"; // BUG: can't enter filepath from command line.
         $this->parser = new Parser;
         $this->decoder = New Decoder;
         $this->assembly_file = $input_file;
@@ -353,8 +352,7 @@ class Decoder
 
         return $binary;
 
-        // TODO
-        // Improvement: Allow for destination with multiple targets to be
+        // TODO: Improvement: Allow for destination with multiple targets to be
         // written in any order.
         // Example: DM=D+1 can also be written as MD=D+1;
     }
@@ -411,15 +409,12 @@ class Decoder
     }
 }
 
-echo "Hello World! Please enter the file name for your Hack assembly language file. \n";
+echo "Please enter the ABSOLUTE file path for your Hack assembly language file. \n";
 
-// Gets the name of the input source file from the command-line argument.
+// Gets the name of the source file from the command-line argument.
 $stdin = fopen('php://stdin', 'r');
-$assembly_file = fgets($stdin);
+$assembly_file = trim(fgets($stdin));
 
 $assembler = new HackAssembler($assembly_file);
 
 $assembler->translate();
-
-// BUG
-// Entire comment lines are not being ignored
