@@ -14,6 +14,8 @@ class HackAssembler
 {
     /** A user-supplied file that contains the assembly instructions which are to be translated.*/
     protected string $assembly_file;
+    public Parser $parser;
+    public Decoder $decoder;
 
     const A_INSTRUCTION = "A_INSTRUCTION";
     const C_INSTRUCTION = "C_INSTRUCTION";
@@ -40,7 +42,7 @@ class HackAssembler
 
         // Creates an output file
         $binary_file = fopen("Prog.hack", 'w')  or die("Problem creating Prog.hack file");
-        // TODO: give output file same name and location as input file.
+        // TODO: Improvement - give output file same name and location as input file.
 
         foreach($assembly_instructions as $instruction) {
             // Strip away anything after the statement, like a comment.
@@ -56,15 +58,20 @@ class HackAssembler
             // Translate A-Instruction
             if ($type === self::A_INSTRUCTION) {
                 $binary = $this->translate_a_instruction($instruction);
+                $binary_formatted = "{$binary}\r\n";
+
+                // fwrite($binary_file, "A-instruction: \n");
+                fwrite($binary_file, $binary_formatted);
             }
 
             // Translate C-Instruction
             if ($type === self::C_INSTRUCTION) {
                 $binary = $this->translate_c_instruction($instruction);
-            }
+                $binary_formatted = "{$binary}\r\n";
 
-            // Writes it as the next line in the output .hack file.
-            fwrite($binary_file, $binary);
+                // fwrite($binary_file, "C-instruction: \n");
+                fwrite($binary_file, $binary_formatted);
+            }
         }
 
         fclose($binary_file);
@@ -91,18 +98,18 @@ class HackAssembler
         // echo $a_instruction . "\n";
 
         // Convert into binary.
-        $address = $this->address_to_binary($a_instruction);
+        $a_binary = $this->hex_to_binary($a_instruction);
         // echo $binary . "\n";
 
         // Add enough zeros to beginning of binary value so there are 16 bits.
-        $zeros_count = $length - strlen($address);
+        $zeros_count = $length - strlen($a_binary);
         $zeros = '';
 
-        for ($i=1; $i < $zeros_count; $i++) {
-            $zeros = "0{$zeros}";
+        for ($i=1; $i <= $zeros_count; $i++) {
+            $zeros .= "0";
         }
 
-        $binary = "{$zeros}{$address}";
+        $binary = "{$zeros}{$a_binary}";
 
         return $binary;
     }
@@ -124,15 +131,14 @@ class HackAssembler
         $jump = $this->parser->jump($instruction);
 
         // Translate each piece into its binary equivalent - Decoder.
-        $dest_binary = $this->decoder->dest($dest);
-        $comp_binary = $this->decoder->comp($comp);
-        $jump_binary = $this->decoder->jump($jump);
-
-        // TODO determined by the Decoder.
-        $a = '';
+        $dest_binary = $this->decoder->dest_to_binary($dest);
+        $comp_binary = $this->decoder->comp_to_binary($comp);
+        $jump_binary = $this->decoder->jump_to_binary($jump);
 
         // Concatenate the pieces into a single binary string.
-        $binary = "111{$a}{$comp_binary}{$dest_binary}{$jump_binary}";
+        $binary = "111{$comp_binary}{$dest_binary}{$jump_binary}";
+
+
 
         return $binary;
     }
@@ -162,14 +168,13 @@ class HackAssembler
     }
 
     /**
-     * Converts a memory address in decimal form to its 15-bit
-     * binary version, precluded with a 0 to indicate an address.
-     * The returned string will have 16 characters.
+     * Converts a memory address in decimal form to its
+     * binary version. The returned binary value does not have a fixed width.
      *
      * @param string $value
      * @return string binary_value
      */
-    protected function address_to_binary($value)
+    protected function hex_to_binary($value)
     {
         $binary_value = "";
         $quotient = 1;
@@ -183,14 +188,13 @@ class HackAssembler
         }
 
         return $binary_value;
-
     }
 }
 
 /** For symbolic (assembly) C-instructions, parses the instruction into its fields (dest, comp, & jump). */
 class Parser {
     /**
-     * Returns the dest segment of the current C-instruction (8 possibilities: null, M, D, MD, A, AM, AD, AMD )
+     * Returns the dest segment of the current C-instruction (8 possibilities)
      * For example:
      *  'D=M' returns 'D'
      *
@@ -272,17 +276,83 @@ class Parser {
 /** Converts symbolic (assembly) c-instructions into binary c-instructions for the Hack computer.*/
 class Decoder
 {
+    /** The destination lookup table */
+    CONST DEST = [
+        'null' => '000',
+        'M' => '001',
+        'D' => '010',
+        'DM' => '011',
+        'A' => '100',
+        'AM' => '101',
+        'AD' => '110',
+        'AMD' => '111'
+    ];
+
+    /** The computation lookup table. Does NOT include 'a' value. */
+    CONST  COMP = [
+            '0'     => '101010',
+            '1'     => '111111',
+            '-1'    => '111010',
+            'D'     => '001100',
+            'A'     => '110000',
+            'M'     => '110000',
+            '!D'    => '001101',
+            '!A'    => '110001',
+            '!M'    => '110001',
+            '-D'    => '001111',
+            '-A'    => '110011',
+            '-M'    => '110011',
+            'D+1'   => '011111',
+            'A+1'   => '110111',
+            'M+1'   => '110111',
+            'D-1'   => '001110',
+            'A-1'   => '110010',
+            'M-1'   => '110010',
+            'D+A'   => '000010',
+            'D+M'   => '000010',
+            'D-A'   => '010011',
+            'D-M'   => '010011',
+            'A-D'   => '000111',
+            'M-D'   => '000111',
+            'D&A'   => '000000',
+            'D&M'   => '000000',
+            'D|A'   => '010101',
+            'D|M'   => '010101'
+    ];
+
+    /** The jump lookup table */
+    CONST  JUMP = [
+        'null'  => '000',
+        'JGT' => '001',
+        'JEQ' => '010',
+        'JGE' => '011',
+        'JLT' => '100',
+        'JNE' => '101',
+        'JLE' => '110',
+        'JMP' => '111'
+        ];
+
     /**
      * Returns the symbolic dest part of the current C-instruction (8 possibilities)
      * For example:
      *  'D' returns '001100'
      *
-     * @param string $instruction
-     * @return string $dest
+     * @pre $dest_assembly can be an empty string.
+     * @param string $dest_assembly
+     * @return string $binary
      */
-    protected function dest($instruction)
+    public function dest_to_binary($dest_assembly)
     {
+        $dest_assembly = ($dest_assembly === "") ? 'null' : trim($dest_assembly);
+
+        $binary = self::DEST[$dest_assembly];
+
+        return $binary;
+
         // TODO
+        // Improvement: Allow for destination with multiple targets to be
+        // written in any order.
+        // Example: DM=D+1 can also be written as MD=D+1;
     }
 
     /**
@@ -290,12 +360,31 @@ class Decoder
      * For example:
      *  'M' returns '110000'
      *
-     * @param string $instruction
-     * @return string $comp
+     * @param string $comp_assembly
+     * @return string $binary
      */
-    protected function comp($instruction)
+    public function comp_to_binary($comp_assembly)
     {
-        // TODO
+        $c_bits = '';
+        $a_bit = '';
+
+        // Get bits for 'c' positions.
+        $c_bits = self::COMP[trim($comp_assembly)];
+
+
+        // Get bit for 'a' position.
+        $contains_a = strpos($comp_assembly, 'A');
+        $contains_m = strpos($comp_assembly, 'M');
+
+        if ($contains_a || ! $contains_m) {
+            $a_bit="0";
+        } else {
+            $a_bit="1";
+        }
+
+        $binary = "{$a_bit}{$c_bits}";
+
+        return $binary;
     }
 
     /**
@@ -303,11 +392,30 @@ class Decoder
      * For example,
      *  'JGT' returns '001'
      *
-     * @param string $instruction
-     * @return string $jump
+     * @pre $jump_assembly can be an empty string.
+     * @param string $jump_assembly
+     * @return string $binary
      */
-    protected function jump($instruction)
+    public function jump_to_binary($jump_assembly)
     {
-        // TODO
+        $jump_assembly = ($jump_assembly === "") ? 'null' : trim($jump_assembly);
+
+        $binary = self::JUMP[$jump_assembly];
+
+
+        return $binary;
     }
 }
+
+echo "Hello World! Please enter the file name for your Hack assembly language file. \n";
+
+// Gets the name of the input source file from the command-line argument.
+$stdin = fopen('php://stdin', 'r');
+$assembly_file = fgets($stdin);
+
+$assembler = new HackAssembler($assembly_file);
+
+$assembler->translate();
+
+// BUG
+// Entire comment lines are not being ignored
