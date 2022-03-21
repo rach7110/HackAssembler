@@ -12,7 +12,8 @@ use Projects\P_06\HackAssembler;
 
 // PART I: Handling Instructions
 // PART II: Handling Symbols
-
+class Main {
+    public function run() {
         echo "Hello World! Please enter the file name for your Hack assembly language file. \n";
 
         // Gets the name of the input source file from the command-line argument.
@@ -22,5 +23,9 @@ use Projects\P_06\HackAssembler;
         $assembler = new HackAssembler($assembly_file);
 
         $assembler->translate();
+    }
+}
 
-        exit;
+$init = new Main;
+$init->run();
+exit;
