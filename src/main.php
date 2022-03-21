@@ -1,8 +1,9 @@
 <?php
-namespace Projects\P_06;
+namespace App;
 
 // BUG Uncaught Error: Class "Projects\P_06\HackAssembler" not found
-use Projects\P_06\HackAssembler;
+
+use App\HackAssembler;
 
 /** When the user supplies a Prog.asm file via the command line argument,
  * it is translated into the correct Hack binary code and stored in a file

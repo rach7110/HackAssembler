@@ -1,5 +1,7 @@
 <?php
-namespace Projects\P_06;
+namespace App;
+
+//TODO move classes to separate files.
 
 /** Converts symbolic machine language (assembly language)
  * to binary machine language written for the Hack hardware

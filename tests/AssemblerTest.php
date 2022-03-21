@@ -1,8 +1,8 @@
 <?php
 namespace Tests;
 
+use App\HackAssembler;
 use PHPUnit\Framework\TestCase;
-use Projects\P_06\HackAssembler;
 
 class AssemblerTest extends TestCase
 {
