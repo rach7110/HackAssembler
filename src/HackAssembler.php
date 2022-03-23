@@ -19,8 +19,8 @@ class HackAssembler
 {
     /** A user-supplied file that contains the assembly instructions which are to be translated.*/
     protected string $assembly_file;
-    // TODO: Improvement - give output file same name and location as input file.
-    protected string $binary_file_path = "/Users/loziuk/code/temp/hackAssembler/Prog.hack";
+    /** Path where input and output files are stored. */
+    protected string $path;
     public Parser $parser;
     public Decoder $decoder;
 
@@ -35,11 +35,21 @@ class HackAssembler
         $this->parser = new Parser;
         $this->decoder = new Decoder;
         $this->assembly_file = $input_file;
+        $this->path = dirname($input_file, $levels = 1);
     }
 
-    public function get_binary_file_path()
+    //TODO
+    /**
+     * Creates a path for the output file from the base path and input file name.
+     *
+     * @return string $binary_file;
+     */
+    public function binary_file_name()
     {
-        return $this->binary_file_path;
+        $base_name = basename($this->assembly_file, ".asm");
+        $binary_file = "{$this->path}/{$base_name}.hack";
+
+        return $binary_file;
     }
 
     /**
@@ -50,7 +60,7 @@ class HackAssembler
     public function translate()
     {
         // Creates an output file
-        $binary_file = fopen($this->binary_file_path, 'w')  or die("Problem creating Prog.hack file");
+        $binary_file = fopen($this->binary_file_name(), 'w')  or die("Problem creating Prog.hack file");
         $assembly_instructions = "";
 
         // Check input file exists.

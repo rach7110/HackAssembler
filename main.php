@@ -25,7 +25,7 @@ class Main {
         try {
             $assembler->translate();
 
-            print_r("Success! Assembly file written to: {$assembler->get_binary_file_path()}\n");
+            print_r("Success! Assembly file written to: {$assembler->binary_file_name()}\n");
         } catch (Exception $e) {
             print_r($e->getMessage());
         }
