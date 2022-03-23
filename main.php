@@ -1,7 +1,6 @@
 <?php
-namespace App;
 
-// BUG Uncaught Error: Class "Projects\P_06\HackAssembler" not found
+require_once __DIR__ . '/vendor/autoload.php';
 
 use App\HackAssembler;
 
@@ -15,15 +14,21 @@ use App\HackAssembler;
 // PART II: Handling Symbols
 class Main {
     public function run() {
-        echo "Hello World! Please enter the file name for your Hack assembly language file. \n";
+        echo "Please enter the ABSOLUTE file path for your Hack assembly language file. \n";
 
-        // Gets the name of the input source file from the command-line argument.
+        // Gets the name of the source file from the command-line argument.
         $stdin = fopen('php://stdin', 'r');
-        $assembly_file = fgets($stdin);
+        $assembly_file = trim(fgets($stdin));
 
         $assembler = new HackAssembler($assembly_file);
 
-        $assembler->translate();
+        try {
+            $assembler->translate();
+
+            print_r("Success! Assembly file written to: {$assembler->get_binary_file()}\n");
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+        }
     }
 }
 
