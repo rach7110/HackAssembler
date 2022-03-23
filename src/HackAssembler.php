@@ -1,8 +1,10 @@
 <?php
+
 namespace App;
 
 use App\Decoder;
 use App\Parser;
+use Exception;
 
 /** Converts symbolic machine language (assembly language)
  * to binary machine language written for the Hack hardware
@@ -17,6 +19,8 @@ class HackAssembler
 {
     /** A user-supplied file that contains the assembly instructions which are to be translated.*/
     protected string $assembly_file;
+    // TODO: Improvement - give output file same name and location as input file.
+    protected string $binary_file_path = "/Users/loziuk/code/temp/hackAssembler/Prog.hack";
     public Parser $parser;
     public Decoder $decoder;
 
@@ -29,27 +33,39 @@ class HackAssembler
     public function __construct($input_file)
     {
         $this->parser = new Parser;
-        $this->decoder = New Decoder;
+        $this->decoder = new Decoder;
         $this->assembly_file = $input_file;
     }
 
+    public function get_binary_file_path()
+    {
+        return $this->binary_file_path;
+    }
+
     /**
-     * Translates the assembly language file from symbolic to binary instructions and write them to file.
+     * Takes a file containing assembly language, translates it to binary instructions, and writes them to file.
      *
      * @return void
      */
     public function translate()
     {
+        // Creates an output file
+        $binary_file = fopen($this->binary_file_path, 'w')  or die("Problem creating Prog.hack file");
+        $assembly_instructions = "";
+
+        // Check input file exists.
+        if (! file_exists($this->assembly_file)) {
+            throw new Exception("File does not exist.\n");
+        }
+
+        // Read instructions into an array.
         $assembly_instructions = file($this->assembly_file, FILE_SKIP_EMPTY_LINES);
 
-        // Creates an output file
-        $binary_file = fopen("Prog.hack", 'w')  or die("Problem creating Prog.hack file");
-
-        // TODO: Improvement - give output file same name and location as input file.
 
         // Blank lines are actually removed.
         $assembly_instructions = array_values(array_filter($assembly_instructions, "trim"));
 
+        // Translate each instruction line and write to file.
         foreach($assembly_instructions as $instruction) {
             // Strip away anything after the statement, like a comment.
             $white_space = strpos($instruction, ' ');
@@ -196,13 +212,3 @@ class HackAssembler
         return $binary_value;
     }
 }
-
-echo "Please enter the ABSOLUTE file path for your Hack assembly language file. \n";
-
-// Gets the name of the source file from the command-line argument.
-$stdin = fopen('php://stdin', 'r');
-$assembly_file = trim(fgets($stdin));
-
-$assembler = new HackAssembler($assembly_file);
-
-$assembler->translate();
