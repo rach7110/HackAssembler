@@ -31,10 +31,13 @@ class AssemblerTest extends TestCase
      */
     public function testAssemblerTranslatesComputeInstructions()
     {
-        $instruction = 'D=D+A';
-        $binary_instruction = $this->assembler->translate_c_instruction($instruction);
+        $instruction1 = 'D=D+A';
+        $instruction2 = 'D=M';
 
-        $this->assertEquals('1110000010010000', $binary_instruction);
+        $binary_instruction1 = $this->assembler->translate_c_instruction($instruction1);
+        $binary_instruction2 = $this->assembler->translate_c_instruction($instruction2);
 
+        $this->assertEquals('1110000010010000', $binary_instruction1);
+        $this->assertEquals('1111110000010000', $binary_instruction2);
     }
 }

@@ -38,12 +38,15 @@ class DecoderTest extends TestCase
         $comp2 = '-M';
         $comp3 = 'D&M';
         $comp4 = 'D&A';
+        $comp5 = 'M';
 
         // Includes 'a' value in results.
         $this->assertEquals('0101010', $this->assembler->decoder->comp_to_binary($comp1));
         $this->assertEquals('1110011',$this->assembler->decoder->comp_to_binary($comp2));
         $this->assertEquals('1000000',$this->assembler->decoder->comp_to_binary($comp3));
         $this->assertEquals('0000000',$this->assembler->decoder->comp_to_binary($comp4));
+        $this->assertEquals('1110000',$this->assembler->decoder->comp_to_binary($comp5));
+
 
     }
 

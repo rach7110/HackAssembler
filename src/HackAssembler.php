@@ -38,7 +38,6 @@ class HackAssembler
         $this->path = dirname($input_file, $levels = 1);
     }
 
-    //TODO
     /**
      * Creates a path for the output file from the base path and input file name.
      *
@@ -59,18 +58,20 @@ class HackAssembler
      */
     public function translate()
     {
-        // Creates an output file
-        $binary_file = fopen($this->binary_file_name(), 'w')  or die("Problem creating Prog.hack file");
-        $assembly_instructions = "";
+        $assembly_instructions = [];
 
         // Check input file exists.
         if (! file_exists($this->assembly_file)) {
             throw new Exception("File does not exist.\n");
+
+            exit;
         }
+
+        // Creates an output file
+        $binary_file = fopen($this->binary_file_name(), 'w')  or die("Problem creating Prog.hack file");
 
         // Read instructions into an array.
         $assembly_instructions = file($this->assembly_file, FILE_SKIP_EMPTY_LINES);
-
 
         // Blank lines are actually removed.
         $assembly_instructions = array_values(array_filter($assembly_instructions, "trim"));
@@ -169,8 +170,6 @@ class HackAssembler
 
         // Concatenate the pieces into a single binary string.
         $binary = "111{$comp_binary}{$dest_binary}{$jump_binary}";
-
-
 
         return $binary;
     }

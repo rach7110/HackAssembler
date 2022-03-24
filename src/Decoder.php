@@ -11,10 +11,12 @@ class Decoder
         'M' => '001',
         'D' => '010',
         'DM' => '011',
+        'MD' => '011',
         'A' => '100',
         'AM' => '101',
+        'MA' => '101',
         'AD' => '110',
-        'AMD' => '111'
+        'AMD' => '111',
     ];
 
     /** The computation lookup table. Does NOT include 'a' value. */
@@ -101,8 +103,8 @@ class Decoder
 
 
         // Get bit for 'a' position.
-        $contains_a = strpos($comp_assembly, 'A');
-        $contains_m = strpos($comp_assembly, 'M');
+        $contains_a = is_int(strpos($comp_assembly, 'A'));
+        $contains_m = is_int(strpos($comp_assembly, 'M'));
 
         if ($contains_a || ! $contains_m) {
             $a_bit="0";

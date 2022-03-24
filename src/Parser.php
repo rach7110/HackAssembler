@@ -14,8 +14,7 @@ class Parser {
      */
     public function dest($instruction)
     {
-        // Everything before the '=' character.
-        $pattern = '/(.*)=/';
+        $pattern = '/(.*)=/';  // Everything before the '=' character.
         preg_match($pattern, $instruction, $matches);
 
         // Return empty string if there is no destination (ie: 0;JMP)
