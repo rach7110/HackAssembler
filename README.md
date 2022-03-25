@@ -7,8 +7,13 @@ This program converts symbolic machine language (assembly language) to binary ma
 The Hack CPU uses address (A), data (D), and memory (M) registers to store data and instructions. A conceptual model of the Hack memory system is shown in Figure 1. (The actual architecture is wired somewhat differently.) Symbolic Hack code is explained in Figure 2. And the translation from symbolic to binary code is shown in Figure 3.
 
 [Figure 1](images/Figure1.png)
+Conceptual model of the Hack memory system
+
 [Figure 2](images/Figure2.png)
+Symbolic Hack code
+
 [Figure 3](images/Figure3.png)
+Hack translation
 
 *Input:* The program expects a text file written in Hack assembly language. It is assumed that valid Hack assembly language is supplied. Sample assembly programs are included in the `/assemblyPrograms` subfolder.
 
