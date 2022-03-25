@@ -69,6 +69,7 @@ class HackAssembler
 
         // Creates an output file
         $binary_file = fopen($this->binary_file_name(), 'w')  or die("Problem creating Prog.hack file");
+        // TODO     check it writes over existing *.hack files.
 
         // Read instructions into an array.
         $assembly_instructions = file($this->assembly_file, FILE_SKIP_EMPTY_LINES);

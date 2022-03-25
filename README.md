@@ -2,16 +2,17 @@
 Simple assembly to binary translator app written in PHP.
 
 #### Introduction
-This program converts symbolic machine language (assembly language) to binary machine language written for the Hack hardware platform.  Hack is a hardware platform created from the nand2tetris course - which teaches students how to build a computer starting from the most basic component, a nand logic gate. This program is part of the Assembler project assignment in the course. 
+This program converts symbolic machine language (assembly language) to binary machine language written for the Hack hardware platform.  Hack is a hardware platform created from the nand2tetris course - which teaches students how to build a computer starting from the most basic component, a nand logic gate. This program is part of the Assembler project assignment in the course.
 
-The Hack CPU uses address (A), data (D), and memory (M) registers to store data and instructions. A generic depliction of this is shown in Figure 1. Symbolic Hack code is explained in Figure 2. And the translation from symbolic to binary code is shown in Figure 3. 
+The Hack CPU uses address (A), data (D), and memory (M) registers to store data and instructions. A conceptual model of the Hack memory system is shown in Figure 1. (The actual architecture is wired somewhat differently.) Symbolic Hack code is explained in Figure 2. And the translation from symbolic to binary code is shown in Figure 3.
 
-*Input:* The program expects a text file written in Hack assembly language. It is assumed that valid Hack assembly languge is supplied. Sample assembly programs are included in the `/assemblyPrograms` subfolder. 
+[Figure 1](images/Figure1.png)
+[Figure 2](images/Figure2.png)
+[Figure 3](images/Figure3.png)
+
+*Input:* The program expects a text file written in Hack assembly language. It is assumed that valid Hack assembly language is supplied. Sample assembly programs are included in the `/assemblyPrograms` subfolder.
 
 *Output:* The output file will contain 16 bit instructions. If the instruction starts with a '0', it represents an address register (A-instruction). Otherwise, if the instruction starts with a '1', it represents a compute instruction (C-instruction) that will be used by the ALU in the hardware platform.
-
-[Test link to image for this project](tests/DecoderTest.php)
-
 #### Technologies
 * PHP 8.0.15
 * Composer 2.2.5
@@ -43,16 +44,14 @@ $ /Users/my-name/hackAssembler/assemblyPrograms/rect/RectL.asm
 ```
 
 #### Testing
-Unit tests are included in the `tests/` folder. Assuming dependencies have been installed via composer, the tests can be run using phpunit. 
+Unit tests are included in the `tests/` folder. Assuming dependencies have been installed via composer, the tests can be run using phpunit.
 ```
 $ vendor/bin/phpunit tests/
 > PHPUnit 9.5.16 by Sebastian Bergmann and contributors.
-> 
+>
 > ........                                                            8 / 8 (100%)
 >
 > Time: 00:00.018, Memory: 4.00 MB
 >
 > OK (8 tests, 26 assertions)
 ```
-
-
