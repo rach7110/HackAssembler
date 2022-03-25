@@ -45,7 +45,7 @@ $ php main.php
 > Please enter the ABSOLUTE file path for your Hack assembly language file.
 
 $ /Users/my-name/hackAssembler/assemblyPrograms/rect/RectL.asm
-> Success! Assembly file written to: /Users/my-name/hackAssembler/assemblyPrograms/rect/RectL.hack
+> Success! Binary file written to: /Users/my-name/hackAssembler/assemblyPrograms/rect/RectL.hack
 ```
 
 #### Testing
