@@ -2,7 +2,7 @@
 Simple assembly to binary translator app written in PHP.
 
 #### Introduction
-This program converts symbolic machine language (assembly language) to binary machine language written for the Hack hardware platform.  Hack is a hardware platform created from the nand2tetris course - which teaches students how to build a computer starting from the most basic component, a nand logic gate. This program is part of the Assembler project assignment in the course.
+An assembler is a program that converts symbolic machine language (assembly language) to binary machine language. This assembler program was written for the Hack hardware platform.  Hack is a hardware platform created from the nand2tetris course - which teaches students how to build a computer starting from the most basic component, a nand logic gate. This program is part of the Assembler project assignment in the course.
 
 The Hack CPU uses address (A), data (D), and memory (M) registers to store data and instructions. A conceptual model of the Hack memory system is shown in Figure 1. (The actual architecture is wired somewhat differently.) Symbolic Hack code is explained in Figure 2. And the translation from symbolic to binary code is shown in Figure 3.
 
